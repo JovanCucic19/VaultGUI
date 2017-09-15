@@ -3,7 +3,7 @@ from pexpect import pxssh
 from tkMessageBox import showinfo, showerror, askokcancel
 import threading
 import time
-from config import ssh_ip, ssh_username, ssh_password, ssh_port
+import config
 
 
 def password_incorrect_window():
@@ -83,7 +83,7 @@ class EnergyGUI(tk.Frame):
         # password_tmp = password_text.get("1.0", 'end-1c')
         password_tmp = password_text.get()
 
-        if password_tmp == "sifra":
+        if password_tmp == config.tmp_login_password:
 
             self.console_log.config(state=tk.NORMAL)
             self.accept_button.config(state=tk.NORMAL)
@@ -121,7 +121,7 @@ class EnergyGUI(tk.Frame):
 #
     def run_vault(self):
         s = pxssh.pxssh(timeout=3)
-        s.login(ssh_ip, ssh_username, ssh_password, port=ssh_port)
+        s.login(config.ssh_ip, config.ssh_username, config.ssh_password, port=config.ssh_port)
         # s.sendline('ls')
         # s.prompt()
         # print s.before
