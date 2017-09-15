@@ -90,7 +90,7 @@ class EnergyGUI(tk.Frame):
             self.accept_button.config(state=tk.NORMAL)
             self.reject_button.config(state=tk.NORMAL)
 
-            t = threading.Thread(target=self.run_vault(config.ssh_ip, config.ssh_username, config.ssh_password, config.ssh_port, password_tmp))
+            t = threading.Thread(target=self.run_vault(config.ssh_ip, config.ssh_username, config.ssh_key_path, config.ssh_port, password_tmp))
             t.start()
 
             while (t.is_alive()):
@@ -120,10 +120,10 @@ class EnergyGUI(tk.Frame):
 #       OBRISATI BASH HISTORY NAKON IZLOGOVANJA
 #
 #
-    def run_vault(self, ssh_ip, ssh_username, ssh_password, ssh_port, password_text):
+    def run_vault(self, ssh_ip, ssh_username, ssh_key_path, ssh_port, password_text):
         try:
             s = pxssh.pxssh(timeout=3)
-            s.login(ssh_ip, ssh_username, ssh_password, port=ssh_port)
+            s.login(ssh_ip, ssh_username, ssh_key=ssh_key_path, port=ssh_port)
             # s.sendline('ls')
             # s.prompt()
             # print s.before
