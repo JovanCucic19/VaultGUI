@@ -7,6 +7,7 @@ import time
 import config
 
 
+
 def password_incorrect_window():
     password_expired_window_title = "Password Incorrect"
     password_expired_window_message = "I am sorry master, the password is incorrect"
