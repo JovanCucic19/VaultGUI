@@ -1,8 +1,16 @@
 import Tkinter as tk
 from pexpect import pxssh
-import getpass
+from tkMessageBox import showinfo, showerror, askokcancel
 import threading
 import time
+from config import ssh_ip, ssh_username, ssh_password, ssh_port
+
+
+def password_incorrect_window():
+    password_expired_window_title = "Password Incorrect"
+    password_expired_window_message = "I am sorry master, the password is incorrect"
+    showerror(password_expired_window_title, password_expired_window_message)
+
 
 class EnergyGUI(tk.Frame):
 
@@ -10,6 +18,7 @@ class EnergyGUI(tk.Frame):
         tk.Frame.__init__(self, master, width=600, height=500)
 
         self.master.title("Energy GUI")
+        self.master.protocol("WM_DELETE_WINDOW", self.destroy_parent_window)
 
         self.accept_button = tk.Button(
             self, text="accept",
@@ -44,9 +53,11 @@ class EnergyGUI(tk.Frame):
             self.toplevel, text="Enter password", height=2, width=20
             )
         self.password_label.pack()
+
         self.master.withdraw()
-        self.password_text = tk.Text(self.toplevel,
-            height=1, width=20
+
+        self.password_text = tk.Entry(self.toplevel, show="*"
+
         )
         self.password_text.pack()
         self.password_text.focus_set()
@@ -64,12 +75,15 @@ class EnergyGUI(tk.Frame):
         self.connecting_label.pack()
 
     def destroy_parent_window(self):
-        self.master.destroy()
+        if askokcancel("Quit", "You want to leave me Master? *sniff*"):
+            self.master.destroy()
+
 
     def get_password(self, password_text):
-        password_tmp = password_text.get("1.0", 'end-1c')
+        # password_tmp = password_text.get("1.0", 'end-1c')
+        password_tmp = password_text.get()
 
-        if password_tmp == "vagrant":
+        if password_tmp == "sifra":
 
             self.console_log.config(state=tk.NORMAL)
             self.accept_button.config(state=tk.NORMAL)
@@ -84,6 +98,8 @@ class EnergyGUI(tk.Frame):
 
             self.master.deiconify()
             self.toplevel.withdraw()
+        else:
+            password_incorrect_window()
 
 
             print(self.accept_button['state'])
@@ -105,7 +121,7 @@ class EnergyGUI(tk.Frame):
 #
     def run_vault(self):
         s = pxssh.pxssh(timeout=3)
-        s.login('127.0.0.1', 'vagrant', 'vagrant', port='2222')
+        s.login(ssh_ip, ssh_username, ssh_password, port=ssh_port)
         # s.sendline('ls')
         # s.prompt()
         # print s.before
@@ -126,7 +142,7 @@ class EnergyGUI(tk.Frame):
         #self.console_log.insert(tk.END, s.before)
 
         # vault_password = self.password_text.get("1.0", 'end-1c')
-        s.sendline('vagrant')
+        s.sendline('sifra')
         s.prompt()
         print(s.before)
         #self.console_log.insert(tk.END, s.before)
