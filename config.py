@@ -4,3 +4,7 @@ ssh_password = "vagrant"
 ssh_port = 2222
 
 tmp_login_password = "sifra"
+
+GAME_RPC_USER = 'vagrant'
+GAME_RPC_PASS = 'vagrant'
+GAME_RPC_PORT = '8332'

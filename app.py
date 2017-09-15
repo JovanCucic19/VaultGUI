@@ -2,6 +2,7 @@ import Tkinter as tk
 from pexpect import pxssh
 from tkMessageBox import showinfo, showerror, askokcancel
 import threading
+import getpass
 import time
 import config
 
@@ -89,7 +90,7 @@ class EnergyGUI(tk.Frame):
             self.accept_button.config(state=tk.NORMAL)
             self.reject_button.config(state=tk.NORMAL)
 
-            t = threading.Thread(target=self.run_vault)
+            t = threading.Thread(target=self.run_vault(config.ssh_ip, config.ssh_username, config.ssh_password, config.ssh_port, password_tmp))
             t.start()
 
             while (t.is_alive()):
@@ -119,33 +120,41 @@ class EnergyGUI(tk.Frame):
 #       OBRISATI BASH HISTORY NAKON IZLOGOVANJA
 #
 #
-    def run_vault(self):
-        s = pxssh.pxssh(timeout=3)
-        s.login(config.ssh_ip, config.ssh_username, config.ssh_password, port=config.ssh_port)
-        # s.sendline('ls')
-        # s.prompt()
-        # print s.before
-        print("connection created!")
-        s.sendline('cd /code')
-        s.prompt()
-        print(s.before)
-        # self.console_log.insert(tk.END, s.before)
+    def run_vault(self, ssh_ip, ssh_username, ssh_password, ssh_port, password_text):
+        try:
+            s = pxssh.pxssh(timeout=3)
+            s.login(ssh_ip, ssh_username, ssh_password, port=ssh_port)
+            # s.sendline('ls')
+            # s.prompt()
+            # print s.before
+            print("connection created!")
+            s.sendline('cd /code')
+            s.prompt()
+            print(s.before)
+            # self.console_log.insert(tk.END, s.before)
 
-        s.sendline('ls')
-        s.prompt()
-        print(s.before)
-        #self.console_log.insert(tk.END, s.before)
+            s.sendline('ls')
+            s.prompt()
+            print(s.before)
+            #self.console_log.insert(tk.END, s.before)
 
-        s.sendline('python vault.py')
-        s.prompt()
-        print(s.before)
-        #self.console_log.insert(tk.END, s.before)
+            s.sendline('python vault.py')
+            s.prompt()
+            print(s.before)
+            #self.console_log.insert(tk.END, s.before)
 
-        # vault_password = self.password_text.get("1.0", 'end-1c')
-        s.sendline('sifra')
-        s.prompt()
-        print(s.before)
-        #self.console_log.insert(tk.END, s.before)
+            # vault_password = self.password_text.get("1.0", 'end-1c')
+            s.sendline(password_text)
+            s.prompt()
+            print(s.before)
+
+
+
+            #self.console_log.insert(tk.END, s.before)
+        except pxssh.ExceptionPxssh as e:
+            print("Failed auth")
+            print(e)
+
 
     def run(self):
         self.mainloop()
