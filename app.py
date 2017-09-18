@@ -116,8 +116,8 @@ class EnergyGUI(tk.Frame):
         #     password_incorrect_window()
 
 
-            print(self.accept_button['state'])
-        print(password_tmp)
+        #     print(self.accept_button['state'])
+        # print(password_tmp)
 
 
 
@@ -168,10 +168,13 @@ class EnergyGUI(tk.Frame):
             # print(s.before)
 
 
-
             s.sendline('exit')
             s.prompt()
             print(s.before)
+
+            print('Clearing bash history')
+            s.sendline('cat /dev/null > ~/.bash_history')
+            s.prompt()
 
             print('Info shown, closing ssh')
             s.logout()
